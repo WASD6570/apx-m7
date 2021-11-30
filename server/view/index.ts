@@ -5,6 +5,7 @@ import * as jwt from "jsonwebtoken";
 import * as path from "path";
 import { createProfile, getUser } from "../controllers/user-controller";
 import { authUser, createAuthUser } from "../controllers/auth-controller";
+import { createPet } from "../controllers/pet-controller";
 
 //sequelize.sync({ force: true });
 
@@ -76,6 +77,27 @@ app.post("/auth/token", async (req, res) => {
     console.log(error);
 
     res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/user/create-pet", authMiddleware, async (req, res) => {
+  try {
+    const { name, description, pictureURI, lat, lng } = req.body;
+    const user = await getUser(req._user.email);
+    if (user == null)
+      return res.status(401).json({ error: "please login first" });
+    const userId = user.get().id;
+    const pet = await createPet(userId, {
+      name,
+      description,
+      pictureURI,
+      lat,
+      lng,
+    });
+    res.json({ pet });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error });
   }
 });
 

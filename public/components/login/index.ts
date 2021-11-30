@@ -28,9 +28,10 @@ class Login extends HTMLElement {
       </div>
     `;
     document.querySelector("custom-login").appendChild(container);
+    document.querySelector(".modal-card-title").textContent = "Inicia sesion";
 
     const loginBttn = document.querySelector(".login-bttn");
-    loginBttn.addEventListener("click", (e: any) => {
+    loginBttn.addEventListener("click", async () => {
       const email: any = document.querySelector("#email");
       const password: any = document.querySelector("#password");
       if (email.value == "" && password.value == "") {
@@ -42,11 +43,24 @@ class Login extends HTMLElement {
       if (password.value == "") {
         return window.alert("password vacio");
       }
-      state.logIn(email.value, password.value, false).then(() => {
-        console.log(state.getState());
-
-        //goTo("/profile")
-      });
+      loginBttn.setAttribute(
+        "class",
+        "signin-bttn button is-success is-loading"
+      );
+      try {
+        await state.logIn(email.value, password.value, false);
+        document.querySelector(".modal-card-title").textContent =
+          "Panel de control";
+        document.querySelector("custom-login").remove();
+        document
+          .querySelector(".modal-card-body")
+          .appendChild(document.createElement("custom-dashboard"));
+      } catch (error) {
+        email.value = "";
+        password.value = "";
+        loginBttn.setAttribute("class", "signin-bttn button is-success");
+        window.alert(error.message);
+      }
     });
   }
 }

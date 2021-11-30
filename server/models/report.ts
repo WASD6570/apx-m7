@@ -13,14 +13,6 @@ Report.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    lat: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    lng: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
     description: {
       type: DataTypes.STRING,
       allowNull: false,

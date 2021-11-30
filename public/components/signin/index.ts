@@ -34,8 +34,10 @@ class Signin extends HTMLElement {
     `;
     document.querySelector("custom-signin").appendChild(container);
 
+    document.querySelector(".modal-card-title").textContent = "Crea una cuenta";
+
     const signinBttn = document.querySelector(".signin-bttn");
-    signinBttn.addEventListener("click", (e: any) => {
+    signinBttn.addEventListener("click", async () => {
       const email: any = document.querySelector("#email");
       const password: any = document.querySelector("#password");
       const passwordCheck: any = document.querySelector("#password-check");
@@ -59,11 +61,22 @@ class Signin extends HTMLElement {
       if (passwordCheck.value !== password.value) {
         return window.alert("Las contraseñas no coinciden");
       }
-      state.logIn(email.value, password.value, true).then(() => {
-        console.log(state.getState());
-
-        //goTo("/profile")
-      });
+      signinBttn.setAttribute("class", "signin-bttn button is-info is-loading");
+      try {
+        await state.logIn(email.value, password.value, true);
+        document.querySelector(".modal-card-title").textContent =
+          "Panel de control";
+        document.querySelector("custom-signin").remove();
+        document
+          .querySelector(".modal-card-body")
+          .appendChild(document.createElement("custom-dashboard"));
+      } catch (error) {
+        email.value = "";
+        password.value = "";
+        passwordCheck.value = "";
+        signinBttn.setAttribute("class", "signin-bttn button is-info");
+        window.alert(error.message);
+      }
     });
   }
 }

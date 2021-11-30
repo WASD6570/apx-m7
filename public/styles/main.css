@@ -1,4 +1,8 @@
 .is-active {
+  width: 100vw;
+}
+
+.modal-card {
   width: 80vw;
 }
 
@@ -25,4 +29,15 @@
     justify-content: center;
     align-items: center;
   }
+}
+
+.MMR-main-container {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  width: 60vw;
 }

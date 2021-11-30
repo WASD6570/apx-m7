@@ -1,4 +1,6 @@
 import { initHomePage } from "./pages/home/index";
+import { initMMR } from "./pages/mis-mascotas-reportadas/index";
+
 import { state } from "./state";
 
 function routeHandler(path: string, container: Element) {
@@ -7,6 +9,12 @@ function routeHandler(path: string, container: Element) {
       path: /\/home/,
       handler: (container) => {
         initHomePage(container);
+      },
+    },
+    {
+      path: /\/mis-mascotas-reportadas/,
+      handler: (container) => {
+        initMMR(container);
       },
     },
   ];
@@ -31,5 +39,5 @@ export async function goTo(path: string) {
 }
 
 export async function initRouter() {
-  goTo("/home");
+  goTo("/mis-mascotas-reportadas");
 }

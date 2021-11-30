@@ -70,7 +70,7 @@ class Header extends HTMLElement {
     const modal = document.querySelector(".modal");
 
     modalDeploy.addEventListener("click", () => {
-      if (!state.isAuthenticated()) {
+      if (state.isAuthenticated() == false) {
         const container = document.querySelector(".modal-card-body");
         container.innerHTML =
           /*html*/
@@ -85,20 +85,26 @@ class Header extends HTMLElement {
 
         signinEl.addEventListener("click", () => {
           container.innerHTML = "";
-          document.querySelector(".modal-card-title").textContent =
-            "Crea una cuenta";
-
           container.appendChild(document.createElement("custom-signin"));
         });
         loginEl.addEventListener("click", () => {
           container.innerHTML = "";
-          document.querySelector(".modal-card-title").textContent =
-            "Inicia sesion";
-
           container.appendChild(document.createElement("custom-login"));
         });
-      } else container.appendChild(document.createElement("custom-dashboard"));
-      modal.setAttribute("class", "is-active");
+      } else {
+        const dashboard = document.querySelector("custom-dashboard");
+        const footer = document.querySelector("#footer-container");
+        if (dashboard) {
+          dashboard.remove();
+          footer.remove();
+        }
+        document
+          .querySelector(".modal-card-body")
+          .appendChild(document.createElement("custom-dashboard"));
+        document.querySelector(".modal-card-title").textContent =
+          "Panel de control";
+      }
+      modal.setAttribute("class", "modal is-active");
     });
   }
 }
