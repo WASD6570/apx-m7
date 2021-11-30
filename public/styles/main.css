@@ -1,0 +1,28 @@
+.is-active {
+  width: 80vw;
+}
+
+.signin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+}
+
+.modal-card {
+  margin: 0px;
+}
+
+.pre-auth-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 400px) {
+  .pre-auth-div {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+  }
+}
