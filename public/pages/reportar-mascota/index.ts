@@ -1,6 +1,6 @@
 import { goTo } from "../../router";
 import { state } from "../../state";
-import { startMap } from "../../lib/mapbox";
+import { initMap, initSearchForm, mapboxgl } from "../../lib/mapbox";
 import Dropzone from "dropzone";
 
 //import { myDropzone } from "../../lib/dropzone";
@@ -26,32 +26,37 @@ export async function initReportPet(containerEl: Element) {
     <h2 class="title is-5" style="margin: 20px;">Descripcion</h2>
     <textarea class="textarea" name="descripcion" placeholder="descripcion..."></textarea>
     </label>
-    </form>
-     <h2 class="title is-5" style="margin: 20px auto auto 10px;">¿Donde se perdio?</h2>
-      <div class="search-form box field has-addons">
-        <div class="control">
+    <h2 class="title is-5" style="margin: 20px auto auto 10px;">¿Donde se perdio?</h2>
+    <p class="subtitle is-6" style="margin: 5px;">
+    Podes buscar como referencia un lugar conocido o hacer click 
+    en el mapa para establecer una ubicacion
+    </p>
+    
+    <div class="search-form box field has-addons">
+    <div class="control">
           <input name="q" type="search" class="q-input input" />
-        </div>
-        <div class="control">
+          </div>
+          <div class="control">
           <a class="q-button button is-info">Buscar</a>
+          </div>
         </div>
-        </div>
-      <div id="map" style="width: 100%; height: 30vh"></div>
+        <div id="map" style="width: 100%; height: 30vh"></div>
     <label class="a label">
-      <h2>Foto</h2>
-      <div
-      class="foto-input image is-2by1"
-      style="height: 150px; border: 1px solid"
-      ></div>
+    <h2>Foto</h2>
+    <div
+    class="foto-input image is-2by1"
+    style="height: 150px; border: 1px solid"
+    ></div>
     </label>
     <div class="field is-grouped box">
-      <div class="control">
-        <button type="submit" class="send button is-success">Send</button>
-      </div>
-      <div class="control">
-        <button class="remove button is-danger">remove file</button>
-      </div>
+    <div class="control">
+    <button type="submit" class="send button is-success">Send</button>
     </div>
+    <div class="control">
+    <button class="remove button is-danger">remove file</button>
+    </div>
+    </div>
+    </form>
     </div>
     `;
     containerEl.appendChild(div);
@@ -62,7 +67,52 @@ export async function initReportPet(containerEl: Element) {
       document.querySelector(".mapboxgl-ctrl-attrib-button").remove();
     }, 10);
 
-    startMap();
+    const { data } = await state.getState();
+
+    const obj = {
+      name: null,
+      description: null,
+      petPicture: null,
+      lat: data.lat,
+      lng: data.lng,
+    };
+
+    (async function () {
+      const map = await initMap();
+
+      const marker = new mapboxgl.Marker({
+        anchor: "center",
+        draggable: false,
+      });
+
+      map.on("click", (e) => {
+        const coordinates = e.lngLat;
+        console.log("Lng:", coordinates.lng, "Lat:", coordinates.lat);
+        marker.setLngLat(coordinates).addTo(map);
+        obj.lat = coordinates.lat;
+        obj.lng = coordinates.lng;
+      });
+
+      initSearchForm(function (results) {
+        try {
+          const firstResult = results[0];
+
+          if (firstResult == undefined) {
+            return window.alert(`no encontre ninguna ubicacion con ese nombre`);
+          }
+
+          const [lng, lat] = firstResult.geometry.coordinates;
+
+          marker.setLngLat([lng, lat]).addTo(map);
+          map.setCenter(firstResult.geometry.coordinates);
+          map.setZoom(14);
+          obj.lat = lat;
+          obj.lng = lng;
+        } catch (error) {
+          console.log(error.message);
+        }
+      });
+    })();
 
     const myDropzone = new Dropzone(".foto-input", {
       url: "/falsa",
@@ -72,14 +122,9 @@ export async function initReportPet(containerEl: Element) {
       thumbnailWidth: 150,
       thumbnailHeight: 150,
     });
-    const obj = {
-      name: "",
-      bio: "",
-      dataURL: "",
-    };
 
     myDropzone.on("thumbnail", function (file) {
-      obj.dataURL = file.dataURL;
+      obj.petPicture = file.dataURL;
       const c1 = document.querySelector(".dz-details");
       const c2 = document.querySelector(".dz-progress");
       const c3 = document.querySelector(".dz-error-message");
@@ -96,11 +141,17 @@ export async function initReportPet(containerEl: Element) {
     form.addEventListener("submit", async (e: any) => {
       e.preventDefault();
       obj.name = e.target.nombre.value;
-      obj.bio = e.target.descripcion.value;
+      obj.description = e.target.descripcion.value;
+
+      for (const property in obj) {
+        if (obj[property] == null || obj[property] == "") {
+          return window.alert(`Porfavor completa ${property}`);
+        }
+      }
 
       console.log(obj);
 
-      // const response = await fetch(`${API_BASE_URL}/profile`, {
+      // const response = await fetch(`${API_BASE_URL}/report-pet`, {
       //   method: "post",
       //   headers: {
       //     "content-type": "application/json",

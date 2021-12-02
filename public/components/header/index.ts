@@ -7,8 +7,6 @@ class Header extends HTMLElement {
     this.render();
   }
   render() {
-    //@ts-ignore
-    //const img = require("url: ../../../public/assets/img/paw-solid.svg");
     const container = document.createElement("section");
     container.innerHTML =
       /*html*/
@@ -16,7 +14,7 @@ class Header extends HTMLElement {
       <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="${state.apiURL}">
-          <img src="" width="112" height="28" />
+          <img src="https://res.cloudinary.com/dacvdoq3z/image/upload/v1638409090/paw-solid_aijjqv.svg" width="60" height="28" />
         </a>
 
         <a
@@ -69,8 +67,8 @@ class Header extends HTMLElement {
     const modalDeploy = document.querySelector(".navbar-burger");
     const modal = document.querySelector(".modal");
 
-    modalDeploy.addEventListener("click", () => {
-      if (state.isAuthenticated() == false) {
+    modalDeploy.addEventListener("click", async () => {
+      if ((await state.isAuthenticated()) == false) {
         const container = document.querySelector(".modal-card-body");
         container.innerHTML =
           /*html*/

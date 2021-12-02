@@ -7,7 +7,7 @@ class Dashboard extends HTMLElement {
   connectedCallback() {
     this.render();
   }
-  render() {
+  async render() {
     const container = document.createElement("section");
     container.innerHTML =
       /*html*/
@@ -23,7 +23,7 @@ class Dashboard extends HTMLElement {
       </ul>
     </div>
     `;
-    const { data } = state.getState();
+    const { data } = await state.getState();
     const email = data.email;
 
     document.querySelector("custom-dashboard").appendChild(container);

@@ -52,5 +52,5 @@ export async function goTo(path: string) {
 }
 
 export async function initRouter() {
-  goTo("/reportar-mascota");
+  goTo("/home");
 }

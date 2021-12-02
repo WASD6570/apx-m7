@@ -35,32 +35,4 @@ function initSearchForm(callback) {
   });
 }
 
-export async function startMap() {
-  const map = await initMap();
-
-  initSearchForm(function (results) {
-    try {
-      const firstResult = results[0];
-
-      if (firstResult == undefined) return console.log("no encontre nada");
-
-      const [lng, lat] = firstResult.geometry.coordinates;
-
-      const marker = new mapboxgl.Marker({
-        anchor: "center",
-        draggable: false,
-      });
-      marker.setLngLat([lng, lat]).addTo(map);
-
-      map.on("click", (e) => {
-        const coordinates = e.lngLat;
-        console.log("Lng:", coordinates.lng, "Lat:", coordinates.lat);
-        marker.setLngLat(coordinates).addTo(map);
-      });
-      map.setCenter(firstResult.geometry.coordinates);
-      map.setZoom(14);
-    } catch (error) {
-      console.log(error.message);
-    }
-  });
-}
+export { initMap, initSearchForm, mapboxgl };

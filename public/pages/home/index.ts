@@ -1,6 +1,6 @@
 import { goTo } from "../../router";
 import { state } from "../../state";
-export function initHomePage(containerEl: Element) {
+export async function initHomePage(containerEl: Element) {
   const div = document.createElement("div");
   div.setAttribute("class", "container");
   const style = document.createElement("style");
@@ -22,16 +22,16 @@ export function initHomePage(containerEl: Element) {
   `;
   containerEl.appendChild(div);
   containerEl.appendChild(style);
-  const { data } = state.getState();
+  const { data } = await state.getState();
   if (data.lat != null && data.lng != null) {
-    goTo("/mascotas-cerca-tuyo");
+    return goTo("/mascotas-cerca-tuyo");
   }
   const geoBttn = document.querySelector(".geobutton");
   geoBttn.addEventListener("click", () => {
     geoBttn.textContent = "Listo!";
     navigator.geolocation.getCurrentPosition(
-      (location) => {
-        let { data } = state.getState();
+      async (location) => {
+        let { data } = await state.getState();
         data.lat = location.coords.latitude;
         data.lng = location.coords.longitude;
         state.setState(data);
