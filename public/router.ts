@@ -1,6 +1,7 @@
 import { initHomePage } from "./pages/home/index";
 import { initMMR } from "./pages/mis-mascotas-reportadas/index";
-
+import { initMCT } from "./pages/mascotas-cerca/index";
+import { initReportPet } from "./pages/reportar-mascota/index";
 import { state } from "./state";
 
 function routeHandler(path: string, container: Element) {
@@ -15,6 +16,18 @@ function routeHandler(path: string, container: Element) {
       path: /\/mis-mascotas-reportadas/,
       handler: (container) => {
         initMMR(container);
+      },
+    },
+    {
+      path: /\/mascotas-cerca-tuyo/,
+      handler: (container) => {
+        initMCT(container);
+      },
+    },
+    {
+      path: /\/reportar-mascota/,
+      handler: (container) => {
+        initReportPet(container);
       },
     },
   ];
@@ -39,5 +52,5 @@ export async function goTo(path: string) {
 }
 
 export async function initRouter() {
-  goTo("/mis-mascotas-reportadas");
+  goTo("/reportar-mascota");
 }

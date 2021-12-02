@@ -8,7 +8,7 @@ class Header extends HTMLElement {
   }
   render() {
     //@ts-ignore
-    const img = require("url: ../../../public/assets/img/paw-solid.svg");
+    //const img = require("url: ../../../public/assets/img/paw-solid.svg");
     const container = document.createElement("section");
     container.innerHTML =
       /*html*/
@@ -16,7 +16,7 @@ class Header extends HTMLElement {
       <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="${state.apiURL}">
-          <img src="${img}" width="112" height="28" />
+          <img src="" width="112" height="28" />
         </a>
 
         <a

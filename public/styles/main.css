@@ -41,3 +41,8 @@
 .card {
   width: 60vw;
 }
+
+.upload-form {
+  width: 80vw;
+  margin-top: 10px;
+}

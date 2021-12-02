@@ -3,6 +3,7 @@ import { sequelize } from "../db";
 import * as crypto from "crypto";
 import * as jwt from "jsonwebtoken";
 import * as path from "path";
+import { index } from "../lib/algolia";
 import { createProfile, getUser } from "../controllers/user-controller";
 import { authUser, createAuthUser } from "../controllers/auth-controller";
 import { createPet } from "../controllers/pet-controller";
@@ -93,6 +94,11 @@ app.post("/user/create-pet", authMiddleware, async (req, res) => {
       pictureURI,
       lat,
       lng,
+    });
+    await index.saveObject({
+      name,
+      description,
+      _geoloc: { lat, lng },
     });
     res.json({ pet });
   } catch (error) {

@@ -1,3 +1,4 @@
+import { goTo } from "../../router";
 import { state } from "../../state";
 class Dashboard extends HTMLElement {
   constructor() {
@@ -16,9 +17,9 @@ class Dashboard extends HTMLElement {
         General
       </p>
       <ul class="menu-list">
-        <li><a>Mis Datos</a></li>
-        <li><a>Mis Mascotas <br> reportadas</a></li>
-        <li><a>Reportar <br> mascota</a></li>
+        <li><a id="mis-datos">Mis Datos</a></li>
+        <li><a id="mis-mascotas-reportadas">Mis Mascotas <br> reportadas</a></li>
+        <li><a id="reportar-mascota">Reportar <br> mascota</a></li>
       </ul>
     </div>
     `;
@@ -38,6 +39,22 @@ class Dashboard extends HTMLElement {
       <a class="end-session">cerrar sesion</a>
     `;
     footer.appendChild(footerContent);
+
+    document.querySelector("#mis-datos").addEventListener("click", () => {
+      goTo("/mis-datos");
+    });
+
+    document
+      .querySelector("#mis-mascotas-reportadas")
+      .addEventListener("click", () => {
+        goTo("/mis-mascotas-reportadas");
+      });
+
+    document
+      .querySelector("#reportar-mascota")
+      .addEventListener("click", () => {
+        goTo("/reportar-mascota");
+      });
 
     const cerrarSesion = document.querySelector(".end-session");
     cerrarSesion.addEventListener("click", () => {

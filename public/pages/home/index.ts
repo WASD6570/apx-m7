@@ -21,6 +21,11 @@ export function initHomePage(containerEl: Element) {
     </section>
   `;
   containerEl.appendChild(div);
+  containerEl.appendChild(style);
+  const { data } = state.getState();
+  if (data.lat != null && data.lng != null) {
+    goTo("/mascotas-cerca-tuyo");
+  }
   const geoBttn = document.querySelector(".geobutton");
   geoBttn.addEventListener("click", () => {
     geoBttn.textContent = "Listo!";
@@ -30,7 +35,7 @@ export function initHomePage(containerEl: Element) {
         data.lat = location.coords.latitude;
         data.lng = location.coords.longitude;
         state.setState(data);
-        //goTo("/mis-mascotas-reportadas")
+        goTo("/mascotas-cerca-tuyo");
       },
       (error) => {
         console.log(error);
@@ -38,5 +43,4 @@ export function initHomePage(containerEl: Element) {
       }
     );
   });
-  containerEl.appendChild(style);
 }

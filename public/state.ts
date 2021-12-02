@@ -24,11 +24,11 @@ const state = {
       this.data = localData;
     }
   },
-  getState() {
-    return this;
+  async getState() {
+    return await this;
   },
-  setState(state: data) {
-    let { data } = this.getState();
+  async setState(state: data) {
+    let { data } = await this.getState();
     data = state;
     localStorage.setItem(LOCAL_STORAGE_ITEMS, JSON.stringify(data));
   },
@@ -37,7 +37,7 @@ const state = {
     password: string,
     newUser: boolean
   ): Promise<void> {
-    let { data } = this.getState();
+    let { data } = await this.getState();
 
     let authPath = "auth/token";
     if (newUser) {
@@ -58,11 +58,18 @@ const state = {
     this.setState(data);
   },
 
-  isAuthenticated(): boolean {
-    const { data } = this.getState();
+  async isAuthenticated(): Promise<boolean> {
+    const { data } = await this.getState();
     if (data.token == null) {
       return false;
     } else true;
+  },
+
+  async isGeolocAvailable(): Promise<boolean> {
+    const { data } = await this.getState();
+    if ((await data.lat) == null && (await data.lng) == null) {
+      return false;
+    } else return true;
   },
 };
 
