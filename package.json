@@ -7,15 +7,15 @@
     "dev:back": "nodemon --legacy-watch ./server/view/index.ts --exec ts-node ./server/view/index.ts",
     "dev:front": "parcel",
     "build:back": "tsc",
-    "build:front": "parcel build --dist-dir public-dist",
-    "build:css": "postcss ./public/styles/tailwind.css -o ./dist/tailwind.css",
+    "build:front": "parcel build",
     "build": "npm run build:back && npm run build:front",
-    "start": "node ./server-dist/index.js"
+    "start": "node ./server-dist/view/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sendgrid/mail": "^7.6.0",
     "algoliasearch": "^4.11.0",
     "cloudinary": "^1.27.1",
     "dotenv": "^10.0.0",

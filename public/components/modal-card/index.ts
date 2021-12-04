@@ -1,8 +1,10 @@
 class ModalCard extends HTMLElement {
+  id: any;
   constructor() {
     super();
   }
   connectedCallback() {
+    this.id = this.getAttribute("id");
     this.render();
   }
   render() {
@@ -25,9 +27,10 @@ class ModalCard extends HTMLElement {
         </div>
       </div>    
     `;
-    document.querySelector("custom-modalcard").appendChild(container);
-    const modal = document.querySelector(".modal");
-    const modalClose = document.querySelector(".delete");
+    document.getElementById(this.id).appendChild(container);
+
+    const modal = this.querySelector(".modal");
+    const modalClose = this.querySelector(".delete");
     modalClose.addEventListener("click", () => {
       modal.classList.remove("is-active");
       modal.setAttribute("class", "modal");

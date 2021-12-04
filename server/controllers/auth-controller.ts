@@ -1,4 +1,4 @@
-import { Auth } from "../models/index";
+import { Auth, User } from "../models/index";
 
 type authData = {
   email: string;
@@ -33,6 +33,7 @@ export async function createAuthUser(
     const [auth, created] = await Auth.findOrCreate({
       where: { email, userId },
       defaults: { email, password, userId },
+      include: [User],
     });
     return { auth, created };
   } catch (error) {

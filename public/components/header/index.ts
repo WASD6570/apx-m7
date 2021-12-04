@@ -62,7 +62,9 @@ class Header extends HTMLElement {
     `;
     const customHeader = document.querySelector("custom-header");
     customHeader.appendChild(container);
-    customHeader.appendChild(document.createElement("custom-modalcard"));
+    const customModalCard = document.createElement("custom-modalcard");
+    customModalCard.setAttribute("id", "a0");
+    customHeader.appendChild(customModalCard);
 
     const modalDeploy = document.querySelector(".navbar-burger");
     const modal = document.querySelector(".modal");
@@ -96,11 +98,16 @@ class Header extends HTMLElement {
           dashboard.remove();
           footer.remove();
         }
-        document
-          .querySelector(".modal-card-body")
-          .appendChild(document.createElement("custom-dashboard"));
-        document.querySelector(".modal-card-title").textContent =
-          "Panel de control";
+        const headerModalCardBody = document.querySelector(".modal-card-body");
+        headerModalCardBody.setAttribute("id", "header-modal-card-body");
+        headerModalCardBody.appendChild(
+          document.createElement("custom-dashboard")
+        );
+
+        const headerModalCardTitle =
+          document.querySelector(".modal-card-title");
+        headerModalCardTitle.setAttribute("id", "header-modal-card-title");
+        headerModalCardTitle.textContent = "Panel de control";
       }
       modal.setAttribute("class", "modal is-active");
     });

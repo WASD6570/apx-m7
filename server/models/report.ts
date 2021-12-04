@@ -5,16 +5,24 @@ export class Report extends Model {}
 
 Report.init(
   {
-    name: {
+    reporterEmail: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    tel: {
-      type: DataTypes.INTEGER,
+    reporterPhone: {
+      type: DataTypes.BIGINT,
       allowNull: false,
     },
     description: {
       type: DataTypes.STRING,
+      allowNull: false,
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    petId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
   },

@@ -1,6 +1,6 @@
 import { goTo } from "../../router";
 import { state } from "../../state";
-export function initMCT(containerEl: Element) {
+export async function initMCT(containerEl: Element) {
   const div = document.createElement("div");
   div.setAttribute("class", "container");
   const style = document.createElement("style");
@@ -19,5 +19,29 @@ export function initMCT(containerEl: Element) {
   `;
   containerEl.appendChild(div);
   containerEl.appendChild(style);
-  const divContainer = document.querySelector("#card-container");
+
+  await state.getNearByPets();
+  const { data } = await state.getState();
+  if (data.nearByPets == null) {
+    const noHay = document.createElement("h2");
+    noHay.textContent = "no hay mascotas cerca tuyo";
+    noHay.setAttribute("class", "subtitle is-2");
+    return document.getElementById("card-container").appendChild(noHay);
+  }
+
+  data.nearByPets.forEach((pet) => {
+    if (pet.isLost == false) {
+      return;
+    } else {
+      const customCard = document.createElement("custom-card");
+      customCard.setAttribute("editable", "false");
+      customCard.setAttribute("name", pet.name);
+      customCard.setAttribute("description", pet.description);
+      customCard.setAttribute("img", pet.pictureURL);
+      customCard.setAttribute("id", pet.objectID);
+      customCard.setAttribute("lat", pet.lat);
+      customCard.setAttribute("lng", pet.lng);
+      div.appendChild(customCard);
+    }
+  });
 }

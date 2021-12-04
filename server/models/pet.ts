@@ -25,6 +25,10 @@ Pet.init(
       type: DataTypes.FLOAT,
       allowNull: false,
     },
+    isLost: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+    },
   },
   {
     sequelize,

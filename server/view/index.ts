@@ -6,15 +6,23 @@ import * as path from "path";
 import { index } from "../lib/algolia";
 import { createProfile, getUser } from "../controllers/user-controller";
 import { authUser, createAuthUser } from "../controllers/auth-controller";
-import { createPet } from "../controllers/pet-controller";
+import { createReport } from "../controllers/report-controller";
+import * as sgMail from "@sendgrid/mail";
+import {
+  createPet,
+  getUserPets,
+  updatePet,
+  checkIfPictureExists,
+  getPet,
+} from "../controllers/pet-controller";
 
-//sequelize.sync({ force: true });
+//sequelize.sync({ alter: true });
 
 //puerto :)
 const port = process.env.PORT || 3000;
 
 // //secret jwt
-const SECRET = "alto_secret_wuachiiin123";
+const SECRET = process.env.JWT_SECRET;
 
 // cosas de express && middlewares
 const app = express();
@@ -29,6 +37,8 @@ function authMiddleware(req, res, next: express.NextFunction): void {
     req._user = data;
     next();
   } catch (error) {
+    console.log(error.message);
+
     res.status(401).json({ error: "unauthorized" });
   }
 }
@@ -83,7 +93,7 @@ app.post("/auth/token", async (req, res) => {
 
 app.post("/user/create-pet", authMiddleware, async (req, res) => {
   try {
-    const { name, description, pictureURI, lat, lng } = req.body;
+    const { name, description, petPicture, lat, lng, isLost } = req.body;
     const user = await getUser(req._user.email);
     if (user == null)
       return res.status(401).json({ error: "please login first" });
@@ -91,62 +101,121 @@ app.post("/user/create-pet", authMiddleware, async (req, res) => {
     const pet = await createPet(userId, {
       name,
       description,
-      pictureURI,
+      pictureURI: petPicture,
       lat,
       lng,
+      isLost,
     });
     await index.saveObject({
+      objectID: pet.get("id"),
+      pictureURL: pet.get("pictureURL"),
       name,
       description,
+      isLost,
       _geoloc: { lat, lng },
     });
     res.json({ pet });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error });
+    res.status(500).json({ error, message: "error en el endpoint" });
   }
 });
 
-// app.post("/products", authMiddleware, async (req, res) => {
-//   try {
-//     const { title, price, description = "" } = req.body;
-//     const [product, created] = await Product.findOrCreate({
-//       where: { title, userId: req._user.id },
-//       defaults: {
-//         title,
-//         price,
-//         description,
-//         userId: req._user.id,
-//       },
-//     });
-//     res.json({ product, created });
-//   } catch (error) {
-//     res.json({ error: error.message });
-//   }
-// });
+app.post("/user/update-pet", authMiddleware, async (req, res) => {
+  try {
+    const { name, description, petPicture, lat, lng, isLost, petId } = req.body;
+    const user = await getUser(req._user.email);
+    if (user == null)
+      return res.status(401).json({ error: "please login first" });
+    const userId = user.get().id;
+    const pet = await updatePet(userId, petId, {
+      name,
+      description,
+      pictureURI: petPicture,
+      lat,
+      lng,
+      isLost,
+    });
 
-// app.get("/products", authMiddleware, async (req, res) => {
-//   try {
-//     const products = await Product.findAll({
-//       where: { userId: req._user.id },
-//     });
-//     res.json({ products });
-//   } catch (error) {
-//     res.json({ error: error.message });
-//   }
-// });
+    const pictureURL = await checkIfPictureExists(petPicture);
+    await index.partialUpdateObject({
+      objectID: petId,
+      pictureURL,
+      name,
+      description,
+      isLost,
+      _geoloc: { lat, lng },
+    });
 
-// app.get("/me", authMiddleware, async (req, res) => {
-//   try {
-//     const auth = await Auth.findOne({
-//       where: { userId: req._user.id },
-//       include: [User],
-//     });
-//     res.json({ auth });
-//   } catch (error) {
-//     res.json({ error: error.message });
-//   }
-// });
+    res.json({ pet });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/user/reported-pets", authMiddleware, async (req, res) => {
+  try {
+    const user = await getUser(req._user.email);
+    if (user == null)
+      return res.status(401).json({ error: "please login first" });
+    const userId = user.get().id;
+    const pets = await getUserPets(userId);
+
+    res.json({ pets });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error, message: "error en el endpoint" });
+  }
+});
+
+app.get("/pets-around", async (req, res) => {
+  try {
+    const { lat, lng } = req.query;
+
+    const { hits } = await index.search("", {
+      aroundRadius: 5000,
+      aroundLatLng: [lat, lng].join(","),
+    });
+    res.json({ hits });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/user/send-report", authMiddleware, async (req, res) => {
+  try {
+    const body = req.body;
+
+    const pet = await getPet(body.id);
+
+    const userId = pet.get().userId;
+
+    const ownerMail = pet.get().user.dataValues.email;
+
+    const info = {
+      reporterPhone: body.phone,
+      description: body.description,
+      reporterEmail: body.email,
+    };
+
+    const test = await createReport(body.id, userId, info);
+
+    sgMail.setApiKey(process.env.MAIL_API_KEY);
+    const msg = {
+      to: ownerMail,
+      from: "wasd12.ns@gmail.com",
+      subject: "Info sobre tu mascota perdida",
+      text: `Hola soy ${body.name}. ${body.description}, comunicate con migo para tener mas info: email:${body.email}, telefono: ${body.phone}`,
+      html: `<h2> Hola soy ${body.name}. ${body.description}, comunicate con migo para tener mas info: email: ${body.email}, telefono: ${body.phone}</h2>`,
+    };
+    await sgMail.send(msg);
+
+    res.json({ message: "email sent!" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../../dist/index.html"));

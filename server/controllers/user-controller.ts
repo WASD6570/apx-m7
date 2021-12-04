@@ -1,5 +1,4 @@
-import { User } from "../models/index";
-import { cloudinary } from "../lib/cloudinary";
+import { User, Pet, Auth, Report } from "../models/index";
 
 type profileData = {
   email: string;
@@ -18,6 +17,7 @@ export async function createProfile(
     const [user, created] = await User.findOrCreate({
       where: { email },
       defaults: { email },
+      include: [Pet, Auth, Report],
     });
     return { user, created };
   } catch (error) {
@@ -33,21 +33,5 @@ export async function getUser(email: string): Promise<User> {
     } else return null;
   } catch (error) {
     console.log(error.message, "get user");
-  }
-}
-
-async function getImageHostURL(URI: string): Promise<string> {
-  try {
-    let secureUrl: string;
-    await cloudinary.uploader.upload(URI, function (err, result) {
-      if (err) {
-        throw err;
-      }
-      return (secureUrl = result.secure_url);
-    });
-
-    return secureUrl;
-  } catch (error) {
-    console.log(error.message);
   }
 }

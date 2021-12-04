@@ -2,7 +2,7 @@ import { initHomePage } from "./pages/home/index";
 import { initMMR } from "./pages/mis-mascotas-reportadas/index";
 import { initMCT } from "./pages/mascotas-cerca/index";
 import { initReportPet } from "./pages/reportar-mascota/index";
-import { state } from "./state";
+import { initMisDatos } from "./pages/mis-datos/index";
 
 function routeHandler(path: string, container: Element) {
   const routes = [
@@ -28,6 +28,12 @@ function routeHandler(path: string, container: Element) {
       path: /\/reportar-mascota/,
       handler: (container) => {
         initReportPet(container);
+      },
+    },
+    {
+      path: /\/mis-datos/,
+      handler: (container) => {
+        initMisDatos(container);
       },
     },
   ];

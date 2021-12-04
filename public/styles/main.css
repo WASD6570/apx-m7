@@ -40,9 +40,30 @@
 
 .card {
   width: 60vw;
+  margin: 20px 0px;
 }
 
 .upload-form {
   width: 80vw;
   margin-top: 10px;
+}
+
+.mmr-page-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+}
+
+.edit {
+  border: none;
+  display: inline-block;
+  position: absolute;
+  right: 3px;
+  bottom: 2px;
 }

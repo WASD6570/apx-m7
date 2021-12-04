@@ -1,4 +1,7 @@
 import algoliasearch from "algoliasearch";
 
-const client = algoliasearch("WVYQW4ELOG", "d20db299e415c1fd01ef4fadb3b0f7cc");
+const client = algoliasearch(
+  process.env.ALGOLIA_API_ID,
+  process.env.ALGOLIA_API_KEY
+);
 export const index = client.initIndex("pets_LOCATIONS");
