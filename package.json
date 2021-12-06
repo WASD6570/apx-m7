@@ -4,7 +4,7 @@
   "description": "",
   "source": "public/index.html",
   "scripts": {
-    "dev:back": "nodemon --legacy-watch ./server/view/index.ts --exec ts-node ./server/view/index.ts",
+    "dev:back": "nodemon --legacy-watch ./server/view/index.ts --exec ts-node ./server/dev.ts",
     "dev:front": "parcel",
     "build:back": "tsc",
     "build:front": "parcel build",

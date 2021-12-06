@@ -1,5 +1,6 @@
 import { goTo } from "../../router";
 import { state } from "../../state";
+import { Header } from "../../components/header";
 export async function initMCT(containerEl: Element) {
   const div = document.createElement("div");
   div.setAttribute("class", "container");
@@ -22,6 +23,11 @@ export async function initMCT(containerEl: Element) {
 
   await state.getNearByPets();
   const { data } = await state.getState();
+
+  if (data.token == null) {
+    Header.showUpAuthModal();
+  }
+
   if (data.nearByPets == null) {
     const noHay = document.createElement("h2");
     noHay.textContent = "no hay mascotas cerca tuyo";

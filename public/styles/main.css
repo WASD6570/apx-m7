@@ -67,3 +67,11 @@
   right: 3px;
   bottom: 2px;
 }
+
+@media (min-width: 1024px) {
+  .navbar-burger {
+    position: absolute;
+    right: 10px;
+    display: block;
+  }
+}

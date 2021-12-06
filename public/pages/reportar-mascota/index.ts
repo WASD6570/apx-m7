@@ -2,6 +2,7 @@ import { goTo } from "../../router";
 import { state } from "../../state";
 import { initMap, initSearchForm, mapboxgl } from "../../lib/mapbox";
 import Dropzone from "dropzone";
+import { Header } from "../../components/header";
 
 export async function initReportPet(containerEl: Element) {
   const div = document.createElement("div");
@@ -9,6 +10,11 @@ export async function initReportPet(containerEl: Element) {
   const style = document.createElement("style");
   style.setAttribute("class", "style");
   style.innerHTML = ``;
+
+  const { data } = await state.getState();
+  if (data.token == null) {
+    Header.showUpAuthModal();
+  }
 
   if (await state.isGeolocAvailable()) {
     div.innerHTML =

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import * as express from "express";
 import { sequelize } from "../db";
 import * as crypto from "crypto";

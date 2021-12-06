@@ -38,7 +38,6 @@ export async function initHomePage(containerEl: Element) {
         goTo("/mascotas-cerca-tuyo");
       },
       (error) => {
-        console.log(error);
         window.alert("no pudimos obtener tu ubicacion");
       }
     );

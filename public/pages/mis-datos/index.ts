@@ -1,4 +1,5 @@
 import { state } from "../../state";
+import { Header } from "../../components/header";
 export async function initMisDatos(containerEl: Element) {
   const div = document.createElement("div");
   div.setAttribute("class", "container");
@@ -6,6 +7,9 @@ export async function initMisDatos(containerEl: Element) {
   style.setAttribute("class", "style");
   style.innerHTML = ``;
   const { data } = await state.getState();
+  if (data.token == null) {
+    Header.showUpAuthModal();
+  }
   div.innerHTML =
     /*html*/
     `

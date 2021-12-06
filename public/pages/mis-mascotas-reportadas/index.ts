@@ -1,5 +1,6 @@
 import { goTo } from "../../router";
 import { state } from "../../state";
+import { Header } from "../../components/header";
 export async function initMMR(containerEl: Element) {
   const div = document.createElement("div");
   div.setAttribute("class", "container");
@@ -16,6 +17,19 @@ export async function initMMR(containerEl: Element) {
 
   await state.getUserPets();
   const { data } = await state.getState();
+
+  if (data.token == null) {
+    Header.showUpAuthModal();
+  }
+
+  if (data.userPets.length == 0) {
+    const noHay = document.createElement("h2");
+    noHay.textContent = "No reportaste ninguna mascota todavia";
+    noHay.setAttribute("class", "subtitle is-4");
+    containerEl.setAttribute("class", "has-text-centered");
+    containerEl.appendChild(noHay);
+  }
+
   data.userPets.forEach((pet) => {
     if (pet.isLost == false) {
       return;
