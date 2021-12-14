@@ -42,7 +42,10 @@ async function createPet(userId: number, petData: petData): Promise<Pet> {
 
 async function getUserPets(userId: number): Promise<Array<Pet>> {
   try {
-    const pets = await Pet.findAll({ where: { userId }, include: [User] });
+    const pets = await Pet.findAll({
+      where: { userId, isLost: true },
+      include: [User],
+    });
     return pets;
   } catch (error) {
     console.log(error, "error en el pet-controler");

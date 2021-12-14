@@ -8,7 +8,7 @@ import { index } from "../lib/algolia";
 import { createProfile, getUser } from "../controllers/user-controller";
 import { authUser, createAuthUser } from "../controllers/auth-controller";
 import { createReport } from "../controllers/report-controller";
-import * as sgMail from "@sendgrid/mail";
+import { sendEmail } from "../lib/sendgrid";
 import {
   createPet,
   getUserPets,
@@ -175,6 +175,7 @@ app.get("/pets-around", async (req, res) => {
     const { lat, lng } = req.query;
 
     const { hits } = await index.search("", {
+      filters: "isLost:true",
       aroundRadius: 5000,
       aroundLatLng: [lat, lng].join(","),
     });
@@ -186,31 +187,23 @@ app.get("/pets-around", async (req, res) => {
 
 app.post("/user/send-report", authMiddleware, async (req, res) => {
   try {
-    const body = req.body;
+    const { name, phone, email, description, id } = req.body;
 
-    const pet = await getPet(body.id);
+    const pet = await getPet(id);
 
     const userId = pet.get().userId;
 
     const ownerMail = pet.get().user.dataValues.email;
 
     const info = {
-      reporterPhone: body.phone,
-      description: body.description,
-      reporterEmail: body.email,
+      reporterPhone: phone,
+      description: description,
+      reporterEmail: email,
     };
 
-    const test = await createReport(body.id, userId, info);
+    await createReport(id, userId, info);
 
-    sgMail.setApiKey(process.env.MAIL_API_KEY);
-    const msg = {
-      to: ownerMail,
-      from: "wasd12.ns@gmail.com",
-      subject: "Info sobre tu mascota perdida",
-      text: `Hola soy ${body.name}. ${body.description}, comunicate con migo para tener mas info: email:${body.email}, telefono: ${body.phone}`,
-      html: `<h2> Hola soy ${body.name}. ${body.description}, comunicate con migo para tener mas info: email: ${body.email}, telefono: ${body.phone}</h2>`,
-    };
-    await sgMail.send(msg);
+    await sendEmail({ name, phone, description, ownerMail, email });
 
     res.json({ message: "email sent!" });
   } catch (error) {
