@@ -23,6 +23,7 @@ const state = {
     lat: null,
     lng: null,
     email: null,
+    userPets: null,
     petInfo: {
       description: null,
       name: null,
@@ -31,7 +32,6 @@ const state = {
       petPicture: null,
       isLost: null,
     },
-    userPets: null,
     nearByPets: null,
   },
   apiURL: API_BASE_URL,

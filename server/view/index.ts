@@ -1,6 +1,7 @@
 import "dotenv/config";
 import * as express from "express";
 import { sequelize } from "../db";
+import * as cors from "cors";
 import * as crypto from "crypto";
 import * as jwt from "jsonwebtoken";
 import * as path from "path";
@@ -20,13 +21,14 @@ import {
 //sequelize.sync({ alter: true });
 
 //puerto :)
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 // //secret jwt
 const SECRET = process.env.JWT_SECRET;
 
 // cosas de express && middlewares
 const app = express();
+app.use(cors());
 app.use(express.json({ limit: 10000000 }));
 
 app.use(express.static(path.resolve(__dirname, "../../dist")));
@@ -60,7 +62,7 @@ app.post("/signin", async (req, res) => {
         password: getSHA256ofString(password),
       });
       const token = jwt.sign({ id: auth.get("userId"), email }, SECRET);
-      res.json(token);
+      res.status(200).json(token);
     } else res.status(400).json({ message: "user already exists!" });
   } catch (error) {
     res.json({ error: error.message });
