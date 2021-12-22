@@ -64,7 +64,7 @@ async function updatePet(
 
     const pictureURL = await checkIfPictureExists(pictureURI);
 
-    const [number, pets] = await Pet.update(
+    const [number, affected] = await Pet.update(
       {
         name,
         pictureURL,
@@ -75,9 +75,15 @@ async function updatePet(
         isLost,
       },
       {
-        where: { id: petId, userId: user.get("id") },
+        where: { id: petId, userId: user.get()["id"] },
       }
     );
+    const pets = await Pet.findAll({
+      where: { userId, isLost: true },
+      include: [User],
+    });
+
+    return pets;
   } catch (error) {
     console.log(error, "error en el pet-controler");
   }

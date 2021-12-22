@@ -18,7 +18,7 @@ import {
   getPet,
 } from "../controllers/pet-controller";
 
-//sequelize.sync({ alter: true });
+//sequelize.sync({ force: true });
 
 //puerto :)
 const port = process.env.PORT || 8080;
@@ -117,7 +117,7 @@ app.post("/user/create-pet", authMiddleware, async (req, res) => {
       isLost,
       _geoloc: { lat, lng },
     });
-    res.json({ pet });
+    res.json(pet);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error, message: "error en el endpoint" });
@@ -127,11 +127,12 @@ app.post("/user/create-pet", authMiddleware, async (req, res) => {
 app.post("/user/update-pet", authMiddleware, async (req, res) => {
   try {
     const { name, description, petPicture, lat, lng, isLost, petId } = req.body;
+
     const user = await getUser(req._user.email);
     if (user == null)
       return res.status(401).json({ error: "please login first" });
     const userId = user.get().id;
-    const pet = await updatePet(userId, petId, {
+    const pets = await updatePet(userId, petId, {
       name,
       description,
       pictureURI: petPicture,
@@ -139,6 +140,8 @@ app.post("/user/update-pet", authMiddleware, async (req, res) => {
       lng,
       isLost,
     });
+
+    console.log(pets);
 
     const pictureURL = await checkIfPictureExists(petPicture);
     await index.partialUpdateObject({
@@ -150,7 +153,7 @@ app.post("/user/update-pet", authMiddleware, async (req, res) => {
       _geoloc: { lat, lng },
     });
 
-    res.json({ pet });
+    res.json(pets);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.message });
