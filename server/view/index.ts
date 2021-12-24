@@ -101,7 +101,7 @@ app.post("/user/create-pet", authMiddleware, async (req, res) => {
     if (user == null)
       return res.status(401).json({ error: "please login first" });
     const userId = user.get().id;
-    const pet = await createPet(userId, {
+    const { userPets, created } = await createPet(userId, {
       name,
       description,
       pictureURI: petPicture,
@@ -110,14 +110,14 @@ app.post("/user/create-pet", authMiddleware, async (req, res) => {
       isLost,
     });
     await index.saveObject({
-      objectID: pet.get("id"),
-      pictureURL: pet.get("pictureURL"),
+      objectID: created.get("id"),
+      pictureURL: created.get("pictureURL"),
       name,
       description,
       isLost,
       _geoloc: { lat, lng },
     });
-    res.json(pet);
+    res.json(userPets);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error, message: "error en el endpoint" });
@@ -214,6 +214,13 @@ app.post("/user/send-report", authMiddleware, async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+
+app.get("/api/mapbox-token", (req, res) => {
+  res.json({
+    token:
+      "pk.eyJ1Ijoid2FzZDEyIiwiYSI6ImNrd2FvNmdrZjI1NjQycGxqZ29ldGEzaWYifQ.UDM7Ur0JGtFmJe3WPidyQQ",
+  });
 });
 
 app.get("*", (req, res) => {

@@ -10,7 +10,10 @@ type petData = {
   isLost: boolean;
 };
 
-async function createPet(userId: number, petData: petData): Promise<Pet> {
+async function createPet(
+  userId: number,
+  petData: petData
+): Promise<{ created: Pet; userPets: Array<Pet> }> {
   try {
     const { pictureURI, name, description, lat, lng, isLost } = petData;
     const user = await User.findByPk(userId);
@@ -19,21 +22,38 @@ async function createPet(userId: number, petData: petData): Promise<Pet> {
       throw Error("user does not exists");
     } else {
       const pictureURL = await checkIfPictureExists(pictureURI);
-      const [pet, created] = await Pet.findOrCreate({
-        where: { name, userId: user.get("id") },
-        defaults: {
-          name,
-          pictureURL,
-          description,
-          userId: user.get("id"),
-          lat,
-          lng,
-          isLost,
-        },
+
+      const pet = await Pet.create({
+        name,
+        pictureURL,
+        description,
+        userId: user.get("id"),
+        lat,
+        lng,
+        isLost,
+      });
+      // const [pet, created] = await Pet.findOrCreate({
+      //   where: { name, userId: user.get("id") },
+      //   defaults: {
+      //     name,
+      //     pictureURL,
+      //     description,
+      //     userId: user.get("id"),
+      //     lat,
+      //     lng,
+      //     isLost,
+      //   },
+      //   include: [User],
+      // });
+
+      const pets = await Pet.findAll({
+        where: { userId, isLost: true },
         include: [User],
       });
 
-      return pet;
+      console.log("use pets when creating", pets, pet);
+
+      return { created: pet, userPets: pets };
     }
   } catch (error) {
     console.log(error, "error en el pet-controler");
