@@ -37,13 +37,14 @@ function routeHandler(path: string, container: Element) {
       },
     },
   ];
-  const contenedor = container.querySelectorAll(".container");
-  const estilos = container.querySelectorAll(".style");
-  if (contenedor.length > 0) {
-    contenedor[0].remove();
-    estilos[0].remove();
-  }
-
+  try {
+    const contenedor = container.querySelectorAll(".container");
+    const estilos = container.querySelectorAll(".style");
+    if (contenedor.length > 0) {
+      contenedor[0].remove();
+      estilos[0].remove();
+    }
+  } catch (error) {}
   for (const r of routes) {
     if (r.path.test(path)) {
       r.handler(container);

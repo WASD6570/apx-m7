@@ -26,8 +26,7 @@ export async function initMMR(containerEl: Element) {
     const noHay = document.createElement("h2");
     noHay.textContent = "No reportaste ninguna mascota todavia";
     noHay.setAttribute("class", "subtitle is-4");
-    containerEl.setAttribute("class", "has-text-centered");
-    containerEl.appendChild(noHay);
+    div.appendChild(noHay);
   }
 
   data.userPets.forEach((pet) => {
