@@ -218,8 +218,7 @@ app.post("/user/send-report", authMiddleware, async (req, res) => {
 
 app.get("/api/mapbox-token", (req, res) => {
   res.json({
-    token:
-      "pk.eyJ1Ijoid2FzZDEyIiwiYSI6ImNrd2FvNmdrZjI1NjQycGxqZ29ldGEzaWYifQ.UDM7Ur0JGtFmJe3WPidyQQ",
+    token: process.env.MAPBOX_TOKEN,
   });
 });
 
